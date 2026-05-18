@@ -15,7 +15,7 @@ done
 
 if [ "$number" -eq 1 ]; then
     echo "Deploying to GCP..."
-    ./setup-cluster-gcp.sh
+    ${DIR}/setup-cluster-gcp.sh
 elif [ "$number" -eq 2 ]; then
     echo "Deploying to Azure..."
     ${DIR}/setup-cluster-azure.sh
