@@ -15,8 +15,38 @@ servingEngineSpec:
       pvcStorage: "50Gi"
       pvcAccessMode:
         - ReadWriteOnce
+      # Enable KEDA autoscaling
       podAnnotations:
         sidecar.opentelemetry.io/inject: "otel-sidecar-template"
+      keda:
+        enabled: true
+        triggers:
+          - type: external
+            metadata:
+              scalerAddress: "keda-otel-scaler.keda.svc:4318"
+              metricQuery: "sum(vllm:kv_cache_usage_perc)"
+              operationOverTime: "avg"
+              targetValue: ".5" # for scaling 1 -> 2
+          - type: external
+            metadata:
+              scalerAddress: "keda-otel-scaler.keda.svc:4318"
+              metricQuery: "sum(vllm:num_requests_waiting)"
+              operationOverTime: "avg"
+              targetValue: "30" # for scaling 2 -> 3
+        minReplicaCount: 1
+        maxReplicaCount: 3
+        fallback:
+          failureThreshold: 10
+          replicas: 1
+        advanced:
+          horizontalPodAutoscalerConfig:
+            behavior:
+              scaleDown:
+                # this should be higher in prod
+                stabilizationWindowSeconds: 1200
+              scaleUp:
+                # this should be much higher in prod
+                stabilizationWindowSeconds: 1
       # initContainer:
       #   name: debug
       #   image: busybox:latest
@@ -38,3 +68,7 @@ servingEngineSpec:
 
       # pass this as --set arg so that it doesn't end up in git
       # hf_token: hf_**
+routerSpec:
+  startupProbe:
+    initialDelaySeconds: 30
+    failureThreshold: 120

@@ -63,7 +63,7 @@ kubectl rollout status -n keda --timeout=600s deploy/keda-otel-scaler
 
 # deploy vLLM Stack & model
 echo "What model do you want to deploy?"
-echo "1: llama3.1-8b-instruct"
+echo "1: llama3.1-8b-instruct (this should be able to run on Tesla T4 16GB)"
 echo "2: qwen2.5-7b-instruct-awq"
 echo "3: gemma-3-4b-it"
 while :; do
