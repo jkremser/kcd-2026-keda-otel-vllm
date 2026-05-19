@@ -76,15 +76,15 @@ done
 if [ "$number" -eq 1 ]; then
     echo "Deploying llama..."
     helm upgrade -i vllm vllm/vllm-stack --version 0.1.11 -f ${DIR}/vllm-stack-values-llama.yaml --set "servingEngineSpec.modelSpec[0].hf_token=${HF_TOKEN}"
-    kubectl rollout status --timeout=600s deploy/vllm-llama-deployment-vllm
+    kubectl rollout status --timeout=900s deploy/vllm-llama-deployment-vllm
 elif [ "$number" -eq 2 ]; then
     echo "Deploying qwen..."
     helm upgrade -i vllm vllm/vllm-stack --version 0.1.11 -f ${DIR}/vllm-stack-values-qwen.yaml --set "servingEngineSpec.modelSpec[0].hf_token=${HF_TOKEN}"
-    kubectl rollout status --timeout=600s deploy/vllm-qwen-deployment-vllm
+    kubectl rollout status --timeout=900s deploy/vllm-qwen-deployment-vllm
 elif [ "$number" -eq 3 ]; then
     echo "Deploying gemma..."
     helm upgrade -i vllm vllm/vllm-stack --version 0.1.11 -f ${DIR}/vllm-stack-values-gemma.yaml --set "servingEngineSpec.modelSpec[0].hf_token=${HF_TOKEN}"
-    kubectl rollout status --timeout=600s deploy/vllm-gemma-deployment-vllm
+    kubectl rollout status --timeout=900s deploy/vllm-gemma-deployment-vllm
 fi
 
 # test
