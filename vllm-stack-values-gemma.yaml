@@ -1,0 +1,40 @@
+# https://github.com/vllm-project/production-stack/blob/main/helm/values.yaml
+servingEngineSpec:
+  runtimeClassName: ""
+  modelSpec:
+    - name: "gemma"
+      repository: "vllm/vllm-openai"
+      # tag: "latest"
+      tag: "v0.17.0"
+      modelURL: "google/gemma-3-4b-it"
+      replicaCount: 1
+
+      requestCPU: 10
+      requestMemory: "30Gi"
+      requestGPU: 1
+      pvcStorage: "50Gi"
+      pvcAccessMode:
+        - ReadWriteOnce
+      podAnnotations:
+        sidecar.opentelemetry.io/inject: "otel-sidecar-template"
+      # initContainer:
+      #   name: debug
+      #   image: busybox:latest
+      #   args: ["sleep", "9999"]
+
+      vllmConfig:
+        # enableChunkedPrefill: false
+        enablePrefixCaching: false
+        maxModelLen: 3000
+        # quantization: "awq"
+        dtype: "half"
+
+        extraArgs: [
+          "--gpu-memory-utilization", "0.95",
+          "--tensor_parallel_size", "1",
+          "--dtype", "float32",
+          "--enforce-eager",
+        ]
+
+      # pass this as --set arg so that it doesn't end up in git
+      # hf_token: hf_**

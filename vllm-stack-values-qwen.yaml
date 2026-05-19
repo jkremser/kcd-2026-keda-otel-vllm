@@ -1,0 +1,37 @@
+# https://github.com/vllm-project/production-stack/blob/main/helm/values.yaml
+servingEngineSpec:
+  runtimeClassName: ""
+  modelSpec:
+    - name: "qwen"
+      repository: "vllm/vllm-openai"
+      # tag: "latest"
+      tag: "v0.17.0"
+      modelURL: "Qwen/Qwen2.5-7B-Instruct-AWQ"
+      replicaCount: 1
+
+      requestCPU: 10
+      requestMemory: "16Gi"
+      requestGPU: 1
+      pvcStorage: "50Gi"
+      pvcAccessMode:
+        - ReadWriteOnce
+      podAnnotations:
+        sidecar.opentelemetry.io/inject: "otel-sidecar-template"
+
+      vllmConfig:
+        # enableChunkedPrefill: false
+        enablePrefixCaching: false
+        maxModelLen: 4096
+        quantization: "awq"
+        dtype: "half"
+
+        # extraArgs: ["--gpu-memory-utilization", "0.8", "--dtype", "half"]
+        extraArgs: [
+          "--gpu-memory-utilization", "0.85",
+          "--max-num-seqs", "1",
+          "--enforce-eager",
+          "--trust-remote-code",
+        ]
+
+      # pass this as --set arg so that it doesn't end up in git
+      # hf_token: hf_**

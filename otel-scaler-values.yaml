@@ -1,0 +1,29 @@
+settings:
+  metricStore:
+    # 'windowing' parameter
+    retentionSeconds: 60
+  # logs:
+  #   logLvl: debug
+
+otelOperator:
+  enabled: true
+  manager:
+    env: []
+  admissionWebhooks:
+    create: true
+
+otelOperatorCrs:
+- name: otel-sidecar-template
+  enabled: true
+  # debug: true
+  mode: sidecar
+  namespace: default
+  prometheusScrapeConfigs:
+    - job_name: 'otel-collector'
+      scrape_interval: 5s
+      static_configs:
+        - targets: [ '0.0.0.0:8000' ]
+  # this will filter out all metrics except the ones we care about, which is important for performance when scraping at a high frequency
+  includeMetrics:
+    - vllm:gpu_cache_usage_perc
+    - vllm:num_requests_waiting

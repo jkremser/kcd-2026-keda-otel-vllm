@@ -3,7 +3,7 @@ set -xe
 source .env-gcp
 
 # Delete the cluster if it already exists
-gcloud beta container --project "$GCP_PROJECT" clusters delete "$CLUSTER_NAME" --zone "$ZONE"
+gcloud beta container --project "$GCP_PROJECT" clusters delete "$CLUSTER_NAME" --zone "$ZONE" || true
 
 # Create the GKE cluster
 gcloud beta container --project "$GCP_PROJECT" clusters create "$CLUSTER_NAME" \
@@ -30,7 +30,7 @@ https://www.googleapis.com/auth/trace.append" \
   --monitoring=SYSTEM,STORAGE,POD,DEPLOYMENT,STATEFULSET,DAEMONSET,HPA,CADVISOR,KUBELET \
   --enable-ip-alias \
   --network "projects/$GCP_PROJECT/global/networks/default" \
-  --subnetwork "projects/$GCP_PROJECT/regions/us-central1/subnetworks/default" \
+  --subnetwork "projects/$GCP_PROJECT/regions/$REGION/subnetworks/default" \
   --no-enable-intra-node-visibility \
   --default-max-pods-per-node "110" \
   --enable-ip-access \
