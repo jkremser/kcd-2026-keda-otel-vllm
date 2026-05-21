@@ -86,10 +86,11 @@ elif [ "$number" -eq 3 ]; then
     helm upgrade -i vllm vllm/vllm-stack --version 0.1.11 -f ${DIR}/vllm-stack-values-gemma.yaml --set "servingEngineSpec.modelSpec[0].hf_token=${HF_TOKEN}"
     kubectl rollout status --timeout=900s deploy/vllm-gemma-deployment-vllm
 fi
+kubectl rollout status --timeout=900s deploy/vllm-deployment-router
 
 # test
 (kubectl port-forward svc/vllm-router-service 30080:80 &> /dev/null)& pf_pid=$!
-(sleep $[10*60] && kill ${pf_pid})&
+(sleep $[20*60] && kill ${pf_pid})&
 
 # change the model param accordingly to the model you deployed
 for x in {0..5}; do curl -s -X POST http://localhost:30080/v1/completions \
